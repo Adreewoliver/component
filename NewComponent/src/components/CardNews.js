@@ -24,10 +24,10 @@ class CardNews extends HTMLElement {
 
     const autorSpan = document.createElement("span");
     const imgAutor = document.createElement("img");
-    imgAutor.src = this.getAttribute("foto") || "./assets/mutley.jpeg";
-    imgAutor.alt = "Foto de perfil";
+    
+ 
     autorSpan.appendChild(imgAutor);
-    autorSpan.append(" " + (this.getAttribute("autor") || "Mutley Vigarista"));
+    
 
     const titulo = document.createElement("h1");
     titulo.textContent = this.getAttribute("titulo") || "Título da vaga";

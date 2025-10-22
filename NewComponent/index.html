@@ -10,19 +10,42 @@
     <link rel="stylesheet" href="./card.css">
 
     <!-- Componente Web -->
-    <script type="module" src="./src/components/CardNews.js"></script>
+    <script type="module" src="./src/components/CardNews.js" defer></script>
 </head>
 
 <body>
     <header>
         <h1 style="text-align:center; margin-top: 20px;color: aliceblue;">Portal de Vagas</h1>
     </header>
+    <div id="forms-vacancy">
+        <form action="#", method="POST" encrytype="multipart/form-data">
+            <div class="form-name">
+                <label for="search">nome completo:</label>
+                
+                <input type="text" id="nome completo" name="nome completo" required>
+            </div>
+            <div class="title-vacancy">
+                <label for="vaga_desejada">vaga </label>
+                <input type="text" id="vaga_desejada" name="vaga_desejada" required>
+            </div>
+            <div class="form-group">
+                <label for="departamento">departamento:</label>
+                <select id="departamento" name="departamento" required>
+                    <option value="Selecione">Selecione um departamento</option>
+                    <option value="desenvolvimento">Desenvolvimento</option>
+                    <option value="design">Design</option>
+                    <option value="marketing">Marketing</option>
+                    <option value="vendas">Vendas</option>
+                    <option value="recursos_humanos">Recursos Humanos</option>
 
+                </select>
+            </div>
+        </form>
+    </div>
     <!-- Componente reutilizável -->
     <card-news
         categoria="Vagas de Emprego"
         autor="Mutley Vigarista"
-        foto="./assets/mutley.jpeg"
         titulo="Dick Vigarista contrata Devs"
         descricao="Procura-se Devs que saibam trabalhar sob pressão, para o projeto Catch the Pigeon. 
         Ambiente acolhedor e amigável, com foco no crescimento pessoal. Café por conta da casa!"
