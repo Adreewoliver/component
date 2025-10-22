@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vagas de Emprego</title>
+
+    <!-- CSS global -->
+    <link rel="stylesheet" href="./card.css">
+
+    <!-- Componente Web -->
+    <script type="module" src="./src/components/CardNews.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1 style="text-align:center; margin-top: 20px;color: aliceblue;">Portal de Vagas</h1>
+    </header>
+
+    <!-- Componente reutilizável -->
+    <card-news
+        categoria="Vagas de Emprego"
+        autor="Mutley Vigarista"
+        foto="./assets/mutley.jpeg"
+        titulo="Dick Vigarista contrata Devs"
+        descricao="Procura-se Devs que saibam trabalhar sob pressão, para o projeto Catch the Pigeon. 
+        Ambiente acolhedor e amigável, com foco no crescimento pessoal. Café por conta da casa!"
+        imagem="./assets/images.jpeg"
+        link="pagina2.html"
+    ></card-news>
+
+    <footer style="text-align:center; margin: 40px 0; color: #ffffff;">
+        <p>© 2025 vagas | Desenvolvido por Adriano de Oliveira Santos</p>
+    </footer>
+</body>
+</html>
