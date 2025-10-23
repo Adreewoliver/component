@@ -1,43 +1,62 @@
 class CardNews extends HTMLElement {
   constructor() {
-    super();
+    super(); // Sempre chame super() primeiro
 
-    // Cria o shadow DOM (isolamento de estilo e estrutura)
-    const shadow = this.attachShadow({ mode: "open" });
+    // O constructor deve fazer o mínimo possível.
+    // Apenas crie o shadow DOM.
+    this.attachShadow({ mode: "open" });
+  }
+
+  // Esta função é chamada QUANDO o elemento é adicionado à página.
+  // Neste ponto, os atributos JÁ EXISTEM.
+  connectedCallback() {
+    // Agora podemos chamar nossa função de renderização
+    this.render();
+  }
+
+  // Criamos uma função para construir o card
+  render() {
+    // Pegamos o shadow root que criamos no constructor
+    const shadow = this.shadowRoot;
+
+    // Limpamos o shadow root para evitar duplicação se o elemento for movido
+    shadow.innerHTML = '';
 
     // Estrutura principal do card
     const card = document.createElement("div");
     card.setAttribute("class", "card");
-    
 
-    // Lado esquerdo
     const cardLeft = document.createElement("div");
     cardLeft.setAttribute("class", "card-left");
 
-    // Lado direito
     const cardRight = document.createElement("div");
     cardRight.setAttribute("class", "card-right");
 
-    // --- Conteúdo do card ---
+    // --- Conteúdo do card (AGORA COM OS ATRIBUTOS CORRETOS) ---
     const spanTop = document.createElement("span");
+    // Agora this.getAttribute() vai funcionar
     spanTop.textContent = this.getAttribute("categoria") || "Vaga de Emprego";
 
     const autorSpan = document.createElement("span");
-    const imgAutor = document.createElement("img");
-    
- 
-    autorSpan.appendChild(imgAutor);
-    
+    autorSpan.textContent = `Por: ${this.getAttribute("nome") || "Empresa"}`;
+    autorSpan.style.fontWeight = "bold";
+    autorSpan.style.color = "#ccc";
+    autorSpan.style.fontSize = "0.9em";
 
     const titulo = document.createElement("h1");
     titulo.textContent = this.getAttribute("titulo") || "Título da vaga";
 
     const descricao = document.createElement("p");
-    descricao.textContent = this.getAttribute("descricao") || "Descrição da vaga...";
+    let desc = this.getAttribute("descricao") || "Descrição da vaga...";
+    if (desc.length > 100) {
+      desc = desc.substring(0, 100) + "...";
+    }
+    descricao.textContent = desc;
 
     const botao = document.createElement("a");
-    botao.href = this.getAttribute("link") || "#";
-    botao.textContent = "Candidatar-se";
+    // O link agora será o correto (ex: pagina2.html?id=12345)
+    botao.href = this.getAttribute("link") || "#"; 
+    botao.textContent = "Ver Detalhes";
     botao.classList.add("botao");
 
     const imagem = document.createElement("img");
@@ -46,7 +65,6 @@ class CardNews extends HTMLElement {
 
     // Montagem
     cardLeft.appendChild(spanTop);
-    cardLeft.appendChild(document.createElement("br"));
     cardLeft.appendChild(autorSpan);
     cardLeft.appendChild(titulo);
     cardLeft.appendChild(descricao);
@@ -57,7 +75,7 @@ class CardNews extends HTMLElement {
     card.appendChild(cardLeft);
     card.appendChild(cardRight);
 
-    // Estilos internos (vinculados ao Shadow DOM)
+    // Estilos internos (copiados do seu original)
     const style = document.createElement("style");
     style.textContent = `
       .card {
@@ -66,21 +84,36 @@ class CardNews extends HTMLElement {
         align-items: center;
         background: #071d56ff;
         max-width: 900px;
-        margin: 40px auto;
+        margin: 20px;
         padding: 20px;
         border-radius: 20px;
         box-shadow: 0 4px 10px rgba(6, 6, 6, 0.1);
         font-family: Arial, sans-serif;
+        flex-basis: 45%;
+        min-width: 400px;
       }
 
       .card-left {
         flex: 1;
         padding: 20px;
       }
+      
+      .card-left h1 {
+        font-size: 1.5em;
+        margin-top: 10px;
+      }
+
+      .card-left p {
+        font-size: 0.9em;
+        margin-top: 10px;
+      }
 
       .card-right img {
-        width: 300px;
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
         border-radius: 10px;
+        margin-left: 15px;
       }
 
       .botao {

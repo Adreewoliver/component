@@ -2,59 +2,65 @@
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vagas de Emprego</title>
-
-    <!-- CSS global -->
-    <link rel="stylesheet" href="./card.css">
-
-    <!-- Componente Web -->
-    <script type="module" src="./src/components/CardNews.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vagas de Emprego</title>
+  <link rel="stylesheet" href="./card.css">
+  <script type="module" src="./src/components/CardNews.js" defer></script>
 </head>
 
 <body>
-    <header>
-        <h1 style="text-align:center; margin-top: 20px;color: aliceblue;">Portal de Vagas</h1>
-    </header>
-    <div id="forms-vacancy">
-        <form action="#", method="POST" encrytype="multipart/form-data">
-            <div class="form-name">
-                <label for="search">nome completo:</label>
-                
-                <input type="text" id="nome completo" name="nome completo" required>
-            </div>
-            <div class="title-vacancy">
-                <label for="vaga_desejada">vaga </label>
-                <input type="text" id="vaga_desejada" name="vaga_desejada" required>
-            </div>
-            <div class="form-group">
-                <label for="departamento">departamento:</label>
-                <select id="departamento" name="departamento" required>
-                    <option value="Selecione">Selecione um departamento</option>
-                    <option value="desenvolvimento">Desenvolvimento</option>
-                    <option value="design">Design</option>
-                    <option value="marketing">Marketing</option>
-                    <option value="vendas">Vendas</option>
-                    <option value="recursos_humanos">Recursos Humanos</option>
+  <header>
+    <h1 style="text-align:center; margin-top: 20px;color: aliceblue;">Portal de Vagas</h1>
+  </header>
 
-                </select>
-            </div>
-        </form>
-    </div>
-    <!-- Componente reutilizável -->
-    <card-news
-        categoria="Vagas de Emprego"
-        autor="Mutley Vigarista"
-        titulo="Dick Vigarista contrata Devs"
-        descricao="Procura-se Devs que saibam trabalhar sob pressão, para o projeto Catch the Pigeon. 
-        Ambiente acolhedor e amigável, com foco no crescimento pessoal. Café por conta da casa!"
-        imagem="./assets/images.jpeg"
-        link="pagina2.html"
-    ></card-news>
+  <nav style="text-align:center; margin: 20px 0;">
+    <a href="pagina5.html" style="margin-right: 15px; text-decoration: none; color: #ffffff; font-weight: bold;">Cadastrar Vaga</a>
+    <a href="index.html" style="text-decoration: none; color: #ffffff; font-weight: bold;">Ver Vagas</a>
+  </nav>
 
-    <footer style="text-align:center; margin: 40px 0; color: #ffffff;">
-        <p>© 2025 vagas | Desenvolvido por Adriano de Oliveira Santos</p>
-    </footer>
+  <main>
+    <h2 style="text-align:center; margin: 20px 0; color: #ffffff;">Vagas Cadastradas</h2>
+    <div id="vagasContainer" style="display: flex; flex-wrap: wrap; justify-content: center;"></div>
+  </main>
+
+  <footer style="text-align:center; margin: 40px 0; color: #ffffff;">
+    <button id="apagarVagas">🗑️ Apagar Todas as Vagas</button>
+    <p style="margin-top: 20px;">© 2025 vagas | Desenvolvido por Adriano de Oliveira Santos</p>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const vagas = JSON.parse(localStorage.getItem("vagas")) || [];
+      const vagasContainer = document.getElementById("vagasContainer");
+
+      if (vagas.length === 0) {
+        vagasContainer.innerHTML = "<p>Nenhuma vaga cadastrada no momento.</p>";
+      }
+
+      vagas.forEach((vaga) => {
+        const card = document.createElement("card-news");
+        card.setAttribute("titulo", vaga.titulo);
+        card.setAttribute("descricao", vaga.descricao);
+        card.setAttribute("categoria", vaga.categoria);
+        card.setAttribute("imagem", vaga.imagem);
+        card.setAttribute("nome", vaga.nome); // <-- ADICIONADO: passa o nome
+        // CORRIGIDO: Gera o link com o ID da vaga
+        card.setAttribute("link", `pagina2.html?id=${vaga.id}`); 
+        vagasContainer.appendChild(card);
+      });
+    });
+  </script>
+  
+  <script>
+    document.getElementById("apagarVagas").addEventListener("click", () => {
+      if (confirm("Tem certeza que deseja apagar todas as vagas cadastradas?")) {
+        localStorage.removeItem("vagas");
+        alert("Todas as vagas foram apagadas com sucesso!");
+        location.reload();
+      }
+    });
+  </script>
 </body>
+
 </html>

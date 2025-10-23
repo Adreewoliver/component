@@ -12,8 +12,9 @@
         <div class="card-left">
             <h1>Formulário de Candidatura</h1>
 
-            <!-- O action leva para pagina4.html -->
             <form action="pagina4.html" method="get">
+                <input type="hidden" id="vagaId" name="vagaId">
+
                 <label for="nome">Nome:</label>
                 <input type="text" id="nome" name="nome" required>
 
@@ -26,9 +27,18 @@
                 <input type="submit" value="Enviar Candidatura" class="botao">
             </form>
 
-            <a class="voltar" href="pagina2.html">⬅ Voltar</a>
+            <a class="voltar" href="javascript:history.back()">⬅ Voltar</a>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get("id");
+            if (id) {
+                document.getElementById("vagaId").value = id;
+            }
+        });
+    </script>
 </body>
 </html>
-`

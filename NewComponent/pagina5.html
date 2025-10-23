@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastrar Nova Vaga</title>
+  <link rel="stylesheet" href="card.css">
+</head>
+
+<body>
+  <div class="card form-card">
+    <div class="card-left">
+      <h1>📋 Cadastrar Nova Vaga</h1>
+      <p>Preencha os campos abaixo para publicar uma nova vaga de emprego.</p>
+
+      <form id="formVaga">
+        <label for="nome">Nome do Anunciante:</label>
+        <input type="text" id="nome" name="nome" required>
+
+        <label for="vaga">Título da Vaga:</label>
+        <input type="text" id="vaga" name="vaga" required>
+
+        <label for="departamento">Departamento:</label>
+        <select id="departamento" name="departamento" required>
+          <option value="">Selecione um departamento</option>
+          <option value="Desenvolvimento">Desenvolvimento</option>
+          <option value="Design">Design</option>
+          <option value="Marketing">Marketing</option>
+          <option value="Vendas">Vendas</option>
+          <option value="Recursos Humanos">Recursos Humanos</option>
+        </select>
+
+        <label for="descricao">Descrição da Vaga:</label>
+        <textarea id="descricao" name="descricao" rows="4" required></textarea>
+
+        <label for="imagem">URL da Imagem (opcional):</label>
+        <input type="text" id="imagem" name="imagem" placeholder="./assets/images.jpeg">
+
+        <div class="botoes">
+          <button type="submit" class="botao">Cadastrar Vaga</button>
+          <button type="reset" class="botao limpar">Limpar</button>
+        </div>
+      </form>
+
+      <a href="index.html" class="botao voltar">⬅ Voltar ao Início</a>
+    </div>
+
+    <div class="card-right">
+      <img src="./assets/mutley4.jpg" alt="Cadastro de Vagas">
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("formVaga").addEventListener("submit", function(e) {
+      e.preventDefault(); // Impede o envio padrão do formulário
+
+      const vaga = {
+        id: Date.now(), // <-- ADICIONADO: ID único para cada vaga
+        nome: document.getElementById("nome").value,
+        titulo: document.getElementById("vaga").value,
+        categoria: document.getElementById("departamento").value,
+        descricao: document.getElementById("descricao").value,
+        imagem: document.getElementById("imagem").value || "./assets/images.jpeg"
+        // O "link" não é mais necessário aqui, será gerado no index.html
+      };
+
+      // Pega vagas anteriores e adiciona a nova
+      const vagas = JSON.parse(localStorage.getItem("vagas")) || [];
+      vagas.push(vaga);
+      localStorage.setItem("vagas", JSON.stringify(vagas));
+
+      alert("✅ Vaga cadastrada com sucesso!");
+      window.location.href = "index.html"; // Redireciona para a página inicial
+    });
+  </script>
+
+</body>
+</html>

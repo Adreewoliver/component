@@ -1,34 +1,47 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vaga: Desenvolvedor Web</title>
-    <link rel="stylesheet" href="card.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalhes da Vaga</title>
+  <link rel="stylesheet" href="card.css">
 </head>
-
 <body>
-    <div class="card">
-        <div class="card-left">
-            <h1>Desenvolvedor Web</h1>
-            <p>Estamos em busca de um desenvolvedor web para se juntar à nossa equipe.</p>
-            <p>Se você é apaixonado por tecnologia e deseja trabalhar em projetos desafiadores, esta é a sua chance!</p>
+  <div class="card">
+    <div class="card-left">
+      <h2 id="titulo"></h2>
+      <p id="descricao"></p>
+      <p><strong>Categoria:</strong> <span id="categoria"></span></p>
+      <p><strong>Anunciante:</strong> <span id="nome"></span></p>
 
-            <h3>Requisitos:</h3>
-            <ul>
-                <li>Experiência em desenvolvimento web</li>
-                <li>Conhecimento em HTML, CSS e JavaScript</li>
-                <li>Capacidade de trabalhar em equipe</li>
-            </ul>
-
-            <a class="botao" href="pagina3.html">Candidatar-se</a>
-            <br>
-            <a class="voltar" href="index.html">⬅ Voltar</a>
-        </div>
-
-        <div class="card-right">
-            <img src="./assets/devweb.png" alt="Desenvolvedor Web">
-        </div>
+      <a id="linkCandidatar" href="pagina3.html" class="botao">Candidatar-se</a>
+      <a href="index.html" class="botao">Voltar ao Início</a>
     </div>
+    <div class="card-right">
+      <img id="imagem" src="" alt="Imagem da vaga">
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = parseInt(params.get("id"));
+    
+    const vagas = JSON.parse(localStorage.getItem("vagas")) || [];
+    const vaga = vagas.find(v => v.id === id);
+    
+    if (vaga) {
+      document.getElementById("titulo").textContent = vaga.titulo;
+      document.getElementById("descricao").textContent = vaga.descricao;
+      document.getElementById("categoria").textContent = vaga.categoria;
+      document.getElementById("nome").textContent = vaga.nome;
+      document.getElementById("imagem").src = vaga.imagem;
+
+      // CORRIGIDO: Adiciona o ID da vaga ao link do botão "Candidatar-se"
+      document.getElementById("linkCandidatar").href = `pagina3.html?id=${vaga.id}`;
+
+    } else {
+      document.querySelector(".card").innerHTML = "<h2>❌ Vaga não encontrada.</h2> <a href='index.html' class='botao'>Voltar</a>";
+    }
+  </script>
 </body>
 </html>
