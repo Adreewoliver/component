@@ -3,17 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cadastrar Nova Vaga</title>
+  <title>Editar Vaga</title>
   <link rel="stylesheet" href="card.css">
+  <style>
+    /* Estilo para a pré-visualização da imagem */
+    #previewImagem {
+      max-width: 150px;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 
 <body>
   <div class="card form-card">
     <div class="card-left">
-      <h1>📋 Cadastrar Nova Vaga</h1>
-      <p>Preencha os campos abaixo para publicar uma nova vaga de emprego.</p>
+      <h1>✏️ Editar Vaga</h1>
+      <p>Altere os campos abaixo para atualizar a vaga.</p>
 
       <form id="formVaga">
+        <input type="hidden" id="vagaId" name="vagaId">
+
         <label for="nome">Nome do Anunciante:</label>
         <input type="text" id="nome" name="nome" required>
 
@@ -33,46 +43,120 @@
         <label for="descricao">Descrição da Vaga:</label>
         <textarea id="descricao" name="descricao" rows="4" required></textarea>
 
-        <label for="imagem">URL da Imagem (opcional):</label>
-        <input type="text" id="imagem" name="imagem" placeholder="./assets/images.jpeg">
+        <label for="imagem">Imagem da Vaga (PNG ou JPG):</label>
+        <small>Deixe em branco para manter a imagem atual.</small>
+        <input type="file" id="imagem" name="imagem" accept="image/png, image/jpeg">
+        
+        <div>
+          <small>Imagem Atual:</small><br>
+          <img id="previewImagem" src="" alt="Imagem atual da vaga">
+        </div>
 
         <div class="botoes">
-          <button type="submit" class="botao">Cadastrar Vaga</button>
-          <button type="reset" class="botao limpar">Limpar</button>
+          <button type="submit" class="botao">Atualizar Vaga</button>
         </div>
       </form>
 
       <a href="index.html" class="botao voltar">⬅ Voltar ao Início</a>
     </div>
 
-    <div class="card-right">
-      <img src="./assets/mutley4.jpg" alt="Cadastro de Vagas">
-    </div>
   </div>
 
-  <script>
-    document.getElementById("formVaga").addEventListener("submit", function(e) {
-      e.preventDefault(); // Impede o envio padrão do formulário
+  <script type="module">
+    // Importa as funções de "buscar por ID" e "atualizar"
+    import { getVagaById, updateVaga } from './src/app.js';
 
-      const vaga = {
-        id: Date.now(), // <-- ADICIONADO: ID único para cada vaga
-        nome: document.getElementById("nome").value,
-        titulo: document.getElementById("vaga").value,
-        categoria: document.getElementById("departamento").value,
-        descricao: document.getElementById("descricao").value,
-        imagem: document.getElementById("imagem").value || "./assets/images.jpeg"
-        // O "link" não é mais necessário aqui, será gerado no index.html
-      };
+    // Pega os elementos do formulário
+    const form = document.getElementById("formVaga");
+    const vagaIdInput = document.getElementById("vagaId");
+    const nomeInput = document.getElementById("nome");
+    const vagaInput = document.getElementById("vaga");
+    const deptoInput = document.getElementById("departamento");
+    const descInput = document.getElementById("descricao");
+    const imgPreview = document.getElementById("previewImagem");
 
-      // Pega vagas anteriores e adiciona a nova
-      const vagas = JSON.parse(localStorage.getItem("vagas")) || [];
-      vagas.push(vaga);
-      localStorage.setItem("vagas", JSON.stringify(vagas));
+    let vagaAtual = null; // Para guardar os dados da vaga atual
 
-      alert("✅ Vaga cadastrada com sucesso!");
-      window.location.href = "index.html"; // Redireciona para a página inicial
+    /**
+     * Converte um arquivo de imagem para uma string Base64.
+     */
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+      });
+    }
+
+    // 1. CARREGA OS DADOS DA VAGA QUANDO A PÁGINA ABRE
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+
+      if (!id) {
+        alert("Erro: ID da vaga não encontrado.");
+        window.location.href = "index.html";
+        return;
+      }
+
+      vagaAtual = getVagaById(id); // Busca a vaga em app.js
+
+      if (vagaAtual) {
+        // Preenche o formulário com os dados existentes
+        vagaIdInput.value = vagaAtual.id;
+        nomeInput.value = vagaAtual.nome;
+        vagaInput.value = vagaAtual.titulo;
+        deptoInput.value = vagaAtual.categoria;
+        descInput.value = vagaAtual.descricao;
+        imgPreview.src = vagaAtual.imagem; // Mostra a imagem atual
+      } else {
+        alert("Erro: Vaga não encontrada.");
+        window.location.href = "index.html";
+      }
+    });
+
+    // 2. CONTROLA O ENVIO DO FORMULÁRIO (ATUALIZAÇÃO)
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const submitButton = e.target.querySelector('button[type="submit"]');
+      submitButton.disabled = true;
+      submitButton.textContent = "Atualizando...";
+
+      try {
+        const file = document.getElementById("imagem").files[0];
+        let imageUrl;
+
+        if (file) {
+          // Se o usuário escolheu uma NOVA imagem, converte
+          imageUrl = await fileToBase64(file);
+        } else {
+          // Se não, mantém a imagem ANTIGA que já estava salva
+          imageUrl = vagaAtual.imagem;
+        }
+
+        const vagaAtualizada = {
+          id: parseInt(vagaIdInput.value), // Garante que o ID é um número
+          nome: nomeInput.value,
+          titulo: vagaInput.value,
+          categoria: deptoInput.value,
+          descricao: descInput.value,
+          imagem: imageUrl
+        };
+
+        updateVaga(vagaAtualizada); // Envia para o app.js
+
+        alert("✅ Vaga atualizada com sucesso!");
+        window.location.href = "index.html";
+
+      } catch (error) {
+        console.error("Erro ao atualizar vaga:", error);
+        alert("❌ Houve um erro ao processar a imagem. Tente novamente.");
+        submitButton.disabled = false;
+        submitButton.textContent = "Atualizar Vaga";
+      }
     });
   </script>
-
 </body>
 </html>

@@ -29,38 +29,40 @@
     <p style="margin-top: 20px;">© 2025 vagas | Desenvolvido por Adriano de Oliveira Santos</p>
   </footer>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const vagas = JSON.parse(localStorage.getItem("vagas")) || [];
-      const vagasContainer = document.getElementById("vagasContainer");
+  <script type="module">
+  // Importa as funções que precisamos do nosso app.js
+  import { getVagas, apagarTodasVagas } from './src/app.js';
 
-      if (vagas.length === 0) {
-        vagasContainer.innerHTML = "<p>Nenhuma vaga cadastrada no momento.</p>";
-      }
+  // --- Lógica para carregar os cards ---
+  document.addEventListener("DOMContentLoaded", function () {
+    const vagas = getVagas(); // <-- USA A FUNÇÃO
+    const vagasContainer = document.getElementById("vagasContainer");
 
-      vagas.forEach((vaga) => {
-        const card = document.createElement("card-news");
-        card.setAttribute("titulo", vaga.titulo);
-        card.setAttribute("descricao", vaga.descricao);
-        card.setAttribute("categoria", vaga.categoria);
-        card.setAttribute("imagem", vaga.imagem);
-        card.setAttribute("nome", vaga.nome); // <-- ADICIONADO: passa o nome
-        // CORRIGIDO: Gera o link com o ID da vaga
-        card.setAttribute("link", `pagina2.html?id=${vaga.id}`); 
-        vagasContainer.appendChild(card);
-      });
+    if (vagas.length === 0) {
+      vagasContainer.innerHTML = "<p>Nenhuma vaga cadastrada no momento.</p>";
+    }
+
+    vagas.forEach((vaga) => {
+      const card = document.createElement("card-news");
+      card.setAttribute("titulo", vaga.titulo);
+      card.setAttribute("descricao", vaga.descricao);
+      card.setAttribute("categoria", vaga.categoria);
+      card.setAttribute("imagem", vaga.imagem);
+      card.setAttribute("nome", vaga.nome);
+      card.setAttribute("link", `pagina2.html?id=${vaga.id}`);
+      vagasContainer.appendChild(card);
     });
-  </script>
-  
-  <script>
-    document.getElementById("apagarVagas").addEventListener("click", () => {
-      if (confirm("Tem certeza que deseja apagar todas as vagas cadastradas?")) {
-        localStorage.removeItem("vagas");
-        alert("Todas as vagas foram apagadas com sucesso!");
-        location.reload();
-      }
-    });
-  </script>
+  });
+
+  // --- Lógica do botão de apagar ---
+  document.getElementById("apagarVagas").addEventListener("click", () => {
+    if (confirm("Tem certeza que deseja apagar todas as vagas cadastradas?")) {
+      apagarTodasVagas(); // <-- USA A FUNÇÃO
+      alert("Todas as vagas foram apagadas com sucesso!");
+      location.reload();
+    }
+  });
+</script>
 </body>
 
 </html>
