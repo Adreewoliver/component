@@ -1,15 +1,5 @@
-Claro\! Um bom `README.md` é a porta de entrada do seu projeto. Ele deve explicar o que o projeto faz, quais tecnologias usa e como executá-lo.
 
-Com base em tudo que construímos, aqui está uma sugestão de arquivo `README.md` completo.
 
------
-
-**Instruções:**
-
-1.  Na pasta principal do seu projeto (onde está o `index.html`), crie um novo arquivo chamado `README.md`.
-2.  Copie e cole o texto abaixo dentro dele.
-
------
 
 # Portal de Vagas (Projeto CRUD)
 
