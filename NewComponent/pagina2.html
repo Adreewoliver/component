@@ -23,24 +23,27 @@
   </div>
 
   <script type="module">
-  // Importa a função que precisamos
-  import { getVagaById } from './src/app.js';
-
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get("id"); // O ID da URL
+    // Importa a função que precisamos
+    import { getVagaById } from './src/app.js';
   
-  const vaga = getVagaById(id); // <-- USA A FUNÇÃO
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id"); // O ID da URL
+    
+    const vaga = getVagaById(id); // Usa a função
+    
+    if (vaga) {
+      document.getElementById("titulo").textContent = vaga.titulo;
+      document.getElementById("descricao").textContent = vaga.descricao;
+      document.getElementById("categoria").textContent = vaga.categoria;
+      document.getElementById("nome").textContent = vaga.nome;
+      document.getElementById("imagem").src = vaga.imagem;
   
-  if (vaga) {
-    document.getElementById("titulo").textContent = vaga.titulo;
-    document.getElementById("descricao").textContent = vaga.descricao;
-    document.getElementById("categoria").textContent = vaga.categoria;
-    document.getElementById("nome").textContent = vaga.nome;
-    document.getElementById("imagem").src = vaga.imagem;
-    document.getElementById("linkCandidatar").href = `pagina3.html?id=${vaga.id}`;
-  } else {
-    document.querySelector(".card").innerHTML = "<h2>❌ Vaga não encontrada.</h2> <a href='index.html' class='botao'>Voltar</a>";
-  }
-</script>
+      // Adiciona o ID da vaga ao link do botão "Candidatar-se"
+      document.getElementById("linkCandidatar").href = `pagina3.html?id=${vaga.id}`;
+  
+    } else {
+      document.querySelector(".card").innerHTML = "<h2>❌ Vaga não encontrada.</h2> <a href='index.html' class='botao'>Voltar</a>";
+    }
+  </script>
 </body>
 </html>

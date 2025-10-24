@@ -1,28 +1,24 @@
+// src/components/CardNews.js
+
 class CardNews extends HTMLElement {
   constructor() {
-    super(); // Sempre chame super() primeiro
-
-    // O constructor deve fazer o mínimo possível.
-    // Apenas crie o shadow DOM.
+    super();
     this.attachShadow({ mode: "open" });
   }
 
-  // Esta função é chamada QUANDO o elemento é adicionado à página.
-  // Neste ponto, os atributos JÁ EXISTEM.
+  // Chamado quando o elemento é conectado ao DOM
   connectedCallback() {
-    // Agora podemos chamar nossa função de renderização
+    // Armazena o ID da vaga. Importante para os botões.
+    this.vagaId = this.getAttribute("vaga-id");
     this.render();
   }
 
-  // Criamos uma função para construir o card
+  // Função que constrói o HTML interno
   render() {
-    // Pegamos o shadow root que criamos no constructor
     const shadow = this.shadowRoot;
+    shadow.innerHTML = ''; // Limpa o conteúdo anterior
 
-    // Limpamos o shadow root para evitar duplicação se o elemento for movido
-    shadow.innerHTML = '';
-
-    // Estrutura principal do card
+    // --- Estrutura ---
     const card = document.createElement("div");
     card.setAttribute("class", "card");
 
@@ -32,9 +28,8 @@ class CardNews extends HTMLElement {
     const cardRight = document.createElement("div");
     cardRight.setAttribute("class", "card-right");
 
-    // --- Conteúdo do card (AGORA COM OS ATRIBUTOS CORRETOS) ---
+    // --- Conteúdo Lado Esquerdo ---
     const spanTop = document.createElement("span");
-    // Agora this.getAttribute() vai funcionar
     spanTop.textContent = this.getAttribute("categoria") || "Vaga de Emprego";
 
     const autorSpan = document.createElement("span");
@@ -53,94 +48,92 @@ class CardNews extends HTMLElement {
     }
     descricao.textContent = desc;
 
-    const botao = document.createElement("a");
-    // O link agora será o correto (ex: pagina2.html?id=12345)
-    botao.href = this.getAttribute("link") || "#"; 
-    botao.textContent = "Ver Detalhes";
-    botao.classList.add("botao");
+    // --- Botões de Ação ---
+    const acoesContainer = document.createElement("div");
+    acoesContainer.classList.add("acoes-container");
 
+    // Botão Ver Detalhes
+    const botaoVer = document.createElement("a");
+    botaoVer.href = this.getAttribute("link") || "#";
+    botaoVer.textContent = "Ver Detalhes";
+    botaoVer.classList.add("botao");
+
+    // Botão Editar
+    const botaoEditar = document.createElement("a");
+    botaoEditar.href = `pagina_editar.html?id=${this.vagaId}`;
+    botaoEditar.textContent = "Editar";
+    botaoEditar.classList.add("botao", "botao-editar");
+
+    // Botão Apagar
+    const botaoApagar = document.createElement("button");
+    botaoApagar.textContent = "Apagar";
+    botaoApagar.classList.add("botao", "botao-apagar");
+
+    botaoApagar.addEventListener('click', () => {
+      if (confirm(`Tem certeza que deseja apagar a vaga: "${this.getAttribute("titulo")}"?`)) {
+        // Dispara um evento customizado que o index.html pode "ouvir"
+        this.dispatchEvent(new CustomEvent('delete-vaga', {
+          detail: { id: this.vagaId },
+          bubbles: true,
+          composed: true
+        }));
+      }
+    });
+    
+    acoesContainer.appendChild(botaoVer);
+    acoesContainer.appendChild(botaoEditar);
+    acoesContainer.appendChild(botaoApagar);
+
+    // --- Conteúdo Lado Direito ---
     const imagem = document.createElement("img");
     imagem.src = this.getAttribute("imagem") || "./assets/images.jpeg";
     imagem.alt = "Imagem da vaga";
 
-    // Montagem
+    // --- Montagem ---
     cardLeft.appendChild(spanTop);
     cardLeft.appendChild(autorSpan);
     cardLeft.appendChild(titulo);
     cardLeft.appendChild(descricao);
-    cardLeft.appendChild(botao);
-
+    cardLeft.appendChild(acoesContainer);
     cardRight.appendChild(imagem);
-
     card.appendChild(cardLeft);
     card.appendChild(cardRight);
 
-    // Estilos internos (copiados do seu original)
+    // --- Estilos ---
     const style = document.createElement("style");
     style.textContent = `
       .card {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: #071d56ff;
-        max-width: 900px;
-        margin: 20px;
-        padding: 20px;
-        border-radius: 20px;
-        box-shadow: 0 4px 10px rgba(6, 6, 6, 0.1);
-        font-family: Arial, sans-serif;
-        flex-basis: 45%;
-        min-width: 400px;
+        display: flex; justify-content: space-between; align-items: center;
+        background: #071d56ff; max-width: 900px; margin: 20px;
+        padding: 20px; border-radius: 20px; box-shadow: 0 4px 10px rgba(6, 6, 6, 0.1);
+        font-family: Arial, sans-serif; flex-basis: 45%; min-width: 400px;
       }
-
-      .card-left {
-        flex: 1;
-        padding: 20px;
-      }
-      
-      .card-left h1 {
-        font-size: 1.5em;
-        margin-top: 10px;
-      }
-
-      .card-left p {
-        font-size: 0.9em;
-        margin-top: 10px;
-      }
-
+      .card-left { flex: 1; padding: 20px; }
+      .card-left h1 { font-size: 1.5em; margin-top: 10px; }
+      .card-left p { font-size: 0.9em; margin-top: 10px; }
       .card-right img {
-        width: 150px;
-        height: 150px;
-        object-fit: cover;
-        border-radius: 10px;
-        margin-left: 15px;
+        width: 150px; height: 150px; object-fit: cover;
+        border-radius: 10px; margin-left: 15px;
       }
-
+      .acoes-container {
+        margin-top: 15px; display: flex;
+        gap: 10px; align-items: center; flex-wrap: wrap;
+      }
       .botao {
-        display: inline-block;
-        background-color: #0078d4;
-        color: #fff;
-        padding: 10px 20px;
-        margin-top: 15px;
-        text-decoration: none;
-        border-radius: 10px;
-        font-weight: bold;
+        display: inline-block; background-color: #0078d4; color: #fff;
+        padding: 10px 15px; text-decoration: none; border-radius: 10px;
+        font-weight: bold; border: none; cursor: pointer; font-size: 14px;
       }
-
-      .botao:hover {
-        background-color: #005fa3;
-      }
-
-      img {
-        vertical-align: middle;
-      }
+      .botao:hover { background-color: #005fa3; }
+      .botao-editar { background-color: #f0ad4e; }
+      .botao-editar:hover { background-color: #ec971f; }
+      .botao-apagar { background-color: #d9534f; }
+      .botao-apagar:hover { background-color: #c9302c; }
     `;
 
-    // Adiciona tudo ao Shadow DOM
     shadow.appendChild(style);
     shadow.appendChild(card);
   }
 }
 
-// Registra o novo elemento
 customElements.define("card-news", CardNews);
